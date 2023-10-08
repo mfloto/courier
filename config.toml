@@ -1,0 +1,5 @@
+server = "EMAIL_SERVER"
+port = 993
+username = "EMAIL_USERNAME"
+password = "EMAIL_PASSSWORD"
+discord_webhook = "DISCORD_WEBHOOK_URL"
