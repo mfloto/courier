@@ -1,5 +1,5 @@
 use mail_parser::PartType::Text;
-use mail_parser::{MessageParser, MimeHeaders};
+use mail_parser::{HeaderName, MessageParser, MimeHeaders};
 use std::borrow::Cow;
 
 /// Email struct that contains all information that will be sent
@@ -9,6 +9,7 @@ pub struct Email {
     pub(crate) subject: String,
     pub(crate) body: String,
     pub(crate) attachments: Option<Vec<Attachment>>,
+    pub(crate) passed_spf: bool,
 }
 
 /// Attachment struct that contains the filename and the contents of the attachment
@@ -65,10 +66,20 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
     // Get the subject
     let subject = parsed_message.subject().unwrap_or("NO SUBJECT").to_string(); // Handle missing subject
 
+    // Check if the message passed SPF
+    let passed_spf = parsed_message
+        .headers()
+        .iter()
+        .any(|header| match &header.name {
+            HeaderName::Other(name) => name == "Received-SPF" && header.value.as_text().unwrap().starts_with("Pass"),
+            _ => false,
+        });
+
     Ok(Email {
         from,
         subject,
         body: body_text.to_string(),
         attachments: attachments.into(),
+        passed_spf,
     })
 }
