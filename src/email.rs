@@ -1,10 +1,11 @@
 use mail_parser::PartType::Text;
-use mail_parser::{HeaderName, MessageParser, MimeHeaders};
+use mail_parser::{Address, HeaderName, MessageParser, MimeHeaders};
 use std::borrow::Cow;
 
 /// Email struct that contains all information that will be sent
 #[derive(Debug)]
 pub struct Email {
+    pub(crate) to: Vec<Recipient>,
     pub(crate) from: String,
     pub(crate) subject: String,
     pub(crate) body: String,
@@ -17,6 +18,13 @@ pub struct Email {
 pub struct Attachment {
     pub(crate) filename: String,
     pub(crate) contents: Vec<u8>,
+}
+
+/// Recipient struct that contains the name and the email address of the recipient
+#[derive(Debug)]
+pub struct Recipient {
+    pub(crate) name: String,
+    pub(crate) address: String,
 }
 
 /// Parse a message to an email object
@@ -35,8 +43,6 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
             contents: attachment.contents().to_vec(),
         })
         .collect();
-
-    println!("Text Body IDs: {:?}", parsed_message.text_body);
 
     // Concatenate all parts of the message that are text
     let body_text: Cow<'_, str> = parsed_message
@@ -71,11 +77,36 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
         .headers()
         .iter()
         .any(|header| match &header.name {
-            HeaderName::Other(name) => name == "Received-SPF" && header.value.as_text().unwrap().starts_with("Pass"),
+            HeaderName::Other(name) => {
+                name == "Received-SPF" && header.value.as_text().unwrap().starts_with("Pass")
+            }
             _ => false,
         });
 
+    // Get all recipients
+    let to: Vec<Recipient> = match parsed_message.to() {
+        Some(Address::List(list)) => list
+            .iter()
+            .map(|addr| {
+                let name = addr
+                    .name
+                    .clone()
+                    .unwrap_or_else(|| Cow::from(""))
+                    .to_string();
+                let address = addr
+                    .address
+                    .clone()
+                    .unwrap_or_else(|| Cow::from(""))
+                    .to_string();
+
+                Recipient { name, address }
+            })
+            .collect(),
+        _ => Vec::new(),
+    };
+
     Ok(Email {
+        to,
         from,
         subject,
         body: body_text.to_string(),
