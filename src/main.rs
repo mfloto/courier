@@ -5,8 +5,6 @@ mod email;
 use crate::config::Config;
 use crate::email::{parse_message_to_email, Email};
 use imap::error::Result as ImapResult;
-use serde::Deserialize;
-use std::fs;
 
 #[tokio::main]
 async fn main() -> ImapResult<()> {
@@ -25,11 +23,23 @@ async fn main() -> ImapResult<()> {
     let messages = imap_session.fetch(60.to_string(), "(RFC822)")?;
 
     // Parse all messages to emails
-    // TODO: Filter for emails addressed to the email list -> Check field
     let emails: Vec<Email> = messages
         .iter()
         .map(|message| parse_message_to_email(message.body().unwrap().to_vec()).unwrap())
         .collect();
+
+    // Check if mailing list address is in mail list id field
+    let emails = emails
+        .into_iter()
+        .filter(|email| {
+            email
+                .list_id
+                .as_ref()
+                .unwrap()
+                .iter()
+                .any(|recipient| recipient.address == config.mailing_list.email)
+        })
+        .collect::<Vec<Email>>();
 
     // Send all emails to Discord
     for email in emails {

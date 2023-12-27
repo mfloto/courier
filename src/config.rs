@@ -17,9 +17,16 @@ pub(crate) struct ImapConfigConfig {
 }
 
 #[derive(Deserialize)]
+pub(crate) struct MailingListConfig {
+    //pub(crate) name: String,
+    pub(crate) email: String,
+}
+
+#[derive(Deserialize)]
 pub(crate) struct Config {
     pub(crate) discord: DiscordConfigConfig,
     pub(crate) imap: ImapConfigConfig,
+    pub(crate) mailing_list: MailingListConfig,
 }
 
 impl Config {

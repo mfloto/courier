@@ -1,5 +1,5 @@
 use mail_parser::PartType::Text;
-use mail_parser::{Address, HeaderName, MessageParser, MimeHeaders};
+use mail_parser::{Address, HeaderName, HeaderValue, MessageParser, MimeHeaders};
 use std::borrow::Cow;
 
 /// Email struct that contains all information that will be sent
@@ -11,6 +11,7 @@ pub struct Email {
     pub(crate) body: String,
     pub(crate) attachments: Option<Vec<Attachment>>,
     pub(crate) passed_spf: bool,
+    pub(crate) list_id: Option<Vec<Recipient>>,
 }
 
 /// Attachment struct that contains the filename and the contents of the attachment
@@ -105,6 +106,43 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
         _ => Vec::new(),
     };
 
+    let list_ids: Vec<Recipient> = parsed_message
+        .headers()
+        .iter()
+        .filter_map(|header| {
+            if let HeaderName::ListId = &header.name {
+                if let HeaderValue::Address(addr) = &header.value {
+                    if let Address::List(list) = addr {
+                        let recipients: Vec<Recipient> = list
+                            .iter()
+                            .map(|addr| {
+                                let name = addr
+                                    .name
+                                    .clone()
+                                    .unwrap_or_else(|| Cow::from(""))
+                                    .to_string();
+                                let address = addr
+                                    .address
+                                    .clone()
+                                    .unwrap_or_else(|| Cow::from(""))
+                                    .to_string();
+
+                                Recipient { name, address }
+                            })
+                            .collect();
+
+                        if !recipients.is_empty() {
+                            return Some(recipients);
+                        }
+                    }
+                }
+            }
+            None
+        })
+        .flatten()
+        .collect();
+
+
     Ok(Email {
         to,
         from,
@@ -112,5 +150,6 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
         body: body_text.to_string(),
         attachments: attachments.into(),
         passed_spf,
+        list_id: Some(list_ids),
     })
 }
