@@ -51,8 +51,8 @@ pub(crate) async fn send_message(
     // Include attachments if they exist
     if let Some(attachments) = email.attachments.as_ref() {
         for (index, attachment) in attachments.iter().enumerate() {
-            // Discord only allows 10 attachments per message
-            if index == 10 {
+            // Discord only allows a limited number of attachments per message. This number can be set in the config file
+            if index == discord_config.max_attachments as usize {
                 break;
             }
 
