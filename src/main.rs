@@ -43,7 +43,7 @@ async fn main() -> ImapResult<()> {
 
     // Send all emails to Discord
     for email in emails {
-        discord::send_message(&email, config.discord.webhook_url.clone())
+        discord::send_message(&email, &config.discord)
             .await
             .expect("TODO: panic message");
     }

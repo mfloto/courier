@@ -25,11 +25,11 @@ struct DiscordEmbed {
 }
 
 /// Send a message to a Discord webhook
-pub async fn send_message(
+pub(crate) async fn send_message(
     email: &Email,
-    webhook_url: String,
+    discord_config: &crate::config::DiscordConfigConfig,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    // Craete a client
+    // Create a client
     let client = reqwest::Client::builder().build()?;
 
     // Construct payload
@@ -62,7 +62,7 @@ pub async fn send_message(
 
     // Send request
     let response = client
-        .post(webhook_url)
+        .post(discord_config.webhook_url.clone())
         .multipart(payload_form)
         .send()
         .await
