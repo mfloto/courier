@@ -38,7 +38,7 @@ pub(crate) async fn send_message(
         embeds: vec![DiscordEmbed {
             title: email.subject.clone(),
             description: email.body.clone(),
-            color: 0x00ff00,
+            color: 0x000000,
         }],
     };
 
