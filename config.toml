@@ -1,5 +1,15 @@
-server = "EMAIL_SERVER"
+[imap]
+server = ""
 port = 993
-username = "EMAIL_USERNAME"
-password = "EMAIL_PASSSWORD"
-discord_webhook = "DISCORD_WEBHOOK_URL"
+username = ""
+password = ""
+check_spf = true
+
+[discord]
+attachment_size_limit = 8
+max_attachments = 10
+webhook_url = ""
+
+[mailing_list]
+name = ""
+email = ""
