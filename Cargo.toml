@@ -9,6 +9,7 @@ rustls = "0.22.1"
 mail-parser = "0.9.2"
 serde_json = "1.0.108"
 toml = "0.8.8"
+html2text = "0.9.1"
 
 [dependencies.imap]
 version = "3.0.0-alpha.12"

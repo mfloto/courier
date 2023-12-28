@@ -1,6 +1,7 @@
-use mail_parser::PartType::Text;
+use mail_parser::PartType::{Html, Text};
 use mail_parser::{Address, HeaderName, HeaderValue, MessageParser, MimeHeaders};
 use std::borrow::Cow;
+use html2text::from_read;
 
 /// Email struct that contains all information that will be sent
 #[derive(Debug)]
@@ -55,6 +56,9 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
                 // TODO: remove println
                 println!("Found text body with ID {}:\n{}", i, message_body);
                 Some(message_body)
+            }
+            Html(message_body) => {
+                Some(from_read(message_body.as_bytes(), 140).into())
             }
             _ => None,
         })
