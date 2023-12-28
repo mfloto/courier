@@ -14,6 +14,7 @@ pub(crate) struct ImapConfigConfig {
     pub(crate) port: u16,
     pub(crate) username: String,
     pub(crate) password: String,
+    pub(crate) interval: u64,
     pub(crate) check_spf: bool,
 }
 
@@ -27,7 +28,7 @@ pub(crate) struct MailingListConfig {
 pub(crate) struct Config {
     pub(crate) discord: DiscordConfigConfig,
     pub(crate) imap: ImapConfigConfig,
-    pub(crate) mailing_list: MailingListConfig,
+    pub(crate) mailing_list: Option<MailingListConfig>,
 }
 
 impl Config {

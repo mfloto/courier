@@ -3,6 +3,7 @@ server = ""
 port = 993
 username = ""
 password = ""
+interval = 5
 check_spf = true
 
 [discord]
