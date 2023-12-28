@@ -5,25 +5,25 @@ edition = "2021"
 
 
 [dependencies]
-rustls = "0.21.7"
-mail-parser = "0.9.1"
-serde_json = "1.0.107"
-toml = "0.8.2"
+rustls = "0.22.1"
+mail-parser = "0.9.2"
+serde_json = "1.0.108"
+toml = "0.8.8"
 
 [dependencies.imap]
-version = "3.0.0-alpha.11"
+version = "3.0.0-alpha.12"
 default-features = false
 features = ["rustls-tls"]
 
 [dependencies.reqwest]
-version = "0.11.22"
+version = "0.11.23"
 default-features = true
 features = ["json", "multipart"]
 
 [dependencies.tokio]
-version = "1.32.0"
+version = "1.35.1"
 features = ["full"]
 
 [dependencies.serde]
-version = "1.0.188"
+version = "1.0.193"
 features = ["derive"]

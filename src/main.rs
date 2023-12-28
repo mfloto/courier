@@ -12,7 +12,7 @@ async fn main() -> ImapResult<()> {
     let config = Config::new();
 
     // Create client and authenticated session
-    let client = imap::ClientBuilder::new(config.imap.server, config.imap.port).rustls()?;
+    let client = imap::ClientBuilder::new(config.imap.server, config.imap.port).connect()?;
     let mut imap_session = client
         .login(config.imap.username, config.imap.password)
         .map_err(|e| e.0)?;
