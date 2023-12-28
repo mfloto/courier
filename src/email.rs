@@ -1,5 +1,5 @@
 use mail_parser::PartType::{Html, Text};
-use mail_parser::{Address, HeaderName, HeaderValue, MessageParser, MimeHeaders};
+use mail_parser::{Addr, Address, HeaderName, HeaderValue, MessageParser, MimeHeaders};
 use std::borrow::Cow;
 use html2text::from_read;
 
@@ -90,23 +90,7 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
 
     // Get all recipients
     let to: Vec<Recipient> = match parsed_message.to() {
-        Some(Address::List(list)) => list
-            .iter()
-            .map(|addr| {
-                let name = addr
-                    .name
-                    .clone()
-                    .unwrap_or_else(|| Cow::from(""))
-                    .to_string();
-                let address = addr
-                    .address
-                    .clone()
-                    .unwrap_or_else(|| Cow::from(""))
-                    .to_string();
-
-                Recipient { name, address }
-            })
-            .collect(),
+        Some(Address::List(list)) => addresses_to_recipients(list),
         _ => Vec::new(),
     };
 
@@ -117,24 +101,7 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
             if let HeaderName::ListId = &header.name {
                 if let HeaderValue::Address(addr) = &header.value {
                     if let Address::List(list) = addr {
-                        let recipients: Vec<Recipient> = list
-                            .iter()
-                            .map(|addr| {
-                                let name = addr
-                                    .name
-                                    .clone()
-                                    .unwrap_or_else(|| Cow::from(""))
-                                    .to_string();
-                                let address = addr
-                                    .address
-                                    .clone()
-                                    .unwrap_or_else(|| Cow::from(""))
-                                    .to_string();
-
-                                Recipient { name, address }
-                            })
-                            .collect();
-
+                        let recipients: Vec<Recipient> = addresses_to_recipients(list);
                         if !recipients.is_empty() {
                             return Some(recipients);
                         }
@@ -156,4 +123,25 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
         passed_spf,
         list_id: Some(list_ids),
     })
+}
+
+/// Convert a list of addresses to a list of recipients
+fn addresses_to_recipients(list: &Vec<Addr>) -> Vec<Recipient> {
+    list
+        .iter()
+        .map(|addr| {
+            let name = addr
+                .name
+                .clone()
+                .unwrap_or_else(|| Cow::from(""))
+                .to_string();
+            let address = addr
+                .address
+                .clone()
+                .unwrap_or_else(|| Cow::from(""))
+                .to_string();
+
+            Recipient { name, address }
+        })
+        .collect()
 }
