@@ -46,6 +46,8 @@ pub(crate) async fn send_message(
     let mut payload_form =
         Form::new().part("payload_json", Part::text(serde_json::to_string(&payload)?));
 
+    let mut total_attachment_size = 0;
+
     // Include attachments if they exist
     if let Some(attachments) = email.attachments.as_ref() {
         for (index, attachment) in attachments.iter().enumerate() {
@@ -53,6 +55,14 @@ pub(crate) async fn send_message(
             if index == 10 {
                 break;
             }
+
+            // Discord only allows a specific size of attachments per message. This size can be set in the config file
+            if total_attachment_size + attachment.contents.len() > discord_config.attachment_size_limit as usize * 1_000_000 {
+                break;
+            }
+
+            total_attachment_size += attachment.contents.len();
+
             payload_form = payload_form.part(
                 attachment.filename.clone(),
                 Part::bytes(attachment.contents.to_vec()).file_name(attachment.filename.clone()),
