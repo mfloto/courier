@@ -14,6 +14,7 @@ pub(crate) struct ImapConfigConfig {
     pub(crate) port: u16,
     pub(crate) username: String,
     pub(crate) password: String,
+    pub(crate) check_spf: bool,
 }
 
 #[derive(Deserialize)]

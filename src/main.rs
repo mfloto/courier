@@ -41,6 +41,16 @@ async fn main() -> ImapResult<()> {
         })
         .collect::<Vec<Email>>();
 
+    // Check if SPF check is enabled and if so, check if the email passed the SPF check
+    let emails = if config.imap.check_spf {
+        emails
+            .into_iter()
+            .filter(|email| email.passed_spf)
+            .collect::<Vec<Email>>()
+    } else {
+        emails
+    };
+
     // Send all emails to Discord
     for email in emails {
         discord::send_message(&email, &config.discord)
