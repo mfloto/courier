@@ -17,10 +17,16 @@ async fn main() -> ImapResult<()> {
         .login(config.imap.username, config.imap.password)
         .map_err(|e| e.0)?;
 
-    // Query specific message from INBOX
-    // TODO: Query all unread messages
+    // Query messages from INBOX
     imap_session.select("INBOX")?;
-    let messages = imap_session.fetch(60.to_string(), "(RFC822)")?;
+    // Fetch unread messages only
+    let message_ids = imap_session.search("UNSEEN")?;
+    let message_ids = message_ids
+        .iter()
+        .map(|id| id.to_string())
+        .collect::<Vec<String>>()
+        .join(",");
+    let messages = imap_session.fetch(message_ids, "(RFC822)")?;
 
     // Parse all messages to emails
     let emails: Vec<Email> = messages
