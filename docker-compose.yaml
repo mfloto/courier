@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  courier:
+    image: courier:latest
+    volumes:
+      - ./config.toml:/config.toml
