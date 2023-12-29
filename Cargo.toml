@@ -1,5 +1,5 @@
 [package]
-name = "the_messenger"
+name = "courier"
 version = "0.1.0"
 edition = "2021"
 
@@ -18,8 +18,8 @@ features = ["rustls-tls"]
 
 [dependencies.reqwest]
 version = "0.11.23"
-default-features = true
-features = ["json", "multipart"]
+default-features = false
+features = ["json", "multipart", "rustls-tls"]
 
 [dependencies.tokio]
 version = "1.35.1"
