@@ -8,8 +8,12 @@ This project is meant to redirect emails together with their attachments into a 
 
 ### Prerequisites
 
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker-compose](https://docs.docker.com/compose/install/)
+
 ## TODO
 
-- [ ] Add DOCKERFILE and docker-compose
+- [x] Add DOCKERFILE and docker-compose
 - [ ] Clean up code
 - [ ] Add tests
+- [ ] Add optional notification about errors on different discord channel
