@@ -31,7 +31,7 @@ This project is meant to redirect emails together with their attachments into a 
 | `[mailing_list]`<br/>(this section is optional and can be omitted) | name                  | String  | The name or title associated with the mailing list. (This parameter is currently not in use)                                             |
 |                                                                    | email                 | String  | The email address of to the mailing list.                                                                                                |
 
-Currently, Discord sets the following limits on webhooks:
+#### Currently, Discord sets the following limits on webhooks:
 
 - 10 attachments per message ([discord] -> max_attachments)
 - 8 MB in total for all attachments ([discord] -> attachment_size_limit)
@@ -47,7 +47,7 @@ Currently, Discord sets the following limits on webhooks:
 
 - [x] Add DOCKERFILE and docker-compose
 - [x] Adjust docker-compose to point to image on dockerhub
-- [ ] Use scratch image (Requires certificates to be copied to image. Maybe copy the ca-certificates from the rust image?)
+- [ ] Use scratch image (Requires certificates to be copied to image. Maybe copy the ca-certificates.crt from the rust image?)
 - [ ] Configure CI
 - [ ] Clean up code
 - [ ] Add logging
