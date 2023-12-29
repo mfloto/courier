@@ -33,6 +33,7 @@ pub(crate) async fn send_message(
     let client = reqwest::Client::builder().build()?;
 
     // Construct payload
+    // TODO: Handle maximum length of message (Cut off message and add note to footer)
     let payload = DiscordMessage {
         username: email.from.clone(),
         embeds: vec![DiscordEmbed {
@@ -53,11 +54,13 @@ pub(crate) async fn send_message(
         for (index, attachment) in attachments.iter().enumerate() {
             // Discord only allows a limited number of attachments per message. This number can be set in the config file
             if index == discord_config.max_attachments as usize {
+                // TODO: Add note to footer that not all attachments are included
                 break;
             }
 
             // Discord only allows a specific size of attachments per message. This size can be set in the config file
             if total_attachment_size + attachment.contents.len() > discord_config.attachment_size_limit as usize * 1_000_000 {
+                // TODO: Add note to footer that not all attachments are included
                 break;
             }
 

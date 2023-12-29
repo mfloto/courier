@@ -94,6 +94,7 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
         _ => Vec::new(),
     };
 
+    // Get all list IDs this message was sent to (if any)
     let list_ids: Vec<Recipient> = parsed_message
         .headers()
         .iter()
