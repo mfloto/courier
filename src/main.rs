@@ -6,15 +6,11 @@ use crate::config::Config;
 use crate::email::{parse_message_to_email, Email};
 use imap::error::Result as ImapResult;
 
-#[tokio::main]
-async fn main() -> ImapResult<()> {
-    // Read config
-    let config = Config::new();
-
+async fn courier(config: &Config) -> ImapResult<()> {
     // Create client and authenticated session
-    let client = imap::ClientBuilder::new(config.imap.server, config.imap.port).connect()?;
+    let client = imap::ClientBuilder::new(&config.imap.server, config.imap.port).connect()?;
     let mut imap_session = client
-        .login(config.imap.username, config.imap.password)
+        .login(&config.imap.username, &config.imap.password)
         .map_err(|e| e.0)?;
 
     // Query messages from INBOX
@@ -34,16 +30,20 @@ async fn main() -> ImapResult<()> {
         .map(|message| parse_message_to_email(message.body().unwrap().to_vec()).unwrap())
         .collect();
 
-    // Check if mailing list address is in mail list id field
+    // Check if mailing list address is in mail list id field (if a mailing list address is set in the config)
     let emails = emails
         .into_iter()
         .filter(|email| {
-            email
-                .list_id
-                .as_ref()
-                .unwrap()
-                .iter()
-                .any(|recipient| recipient.address == config.mailing_list.email)
+            if let Some(mailing_list) = &config.mailing_list {
+                email
+                    .list_id
+                    .as_ref()
+                    .unwrap()
+                    .iter()
+                    .any(|recipient| recipient.address == mailing_list.email)
+            } else {
+                true
+            }
         })
         .collect::<Vec<Email>>();
 
@@ -68,4 +68,18 @@ async fn main() -> ImapResult<()> {
     // Logout and disconnect
     imap_session.logout()?;
     Ok(())
+}
+
+#[tokio::main]
+async fn main() {
+    // Read config
+    let config = Config::new();
+
+    // Run courier on a loop
+    loop {
+        // TODO: logging
+        // TODO: notification on error
+        courier(&config).await.expect("An error occurred!");
+        tokio::time::sleep(std::time::Duration::from_secs(config.imap.interval * 60)).await;
+    }
 }
