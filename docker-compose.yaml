@@ -2,6 +2,6 @@ version: '3'
 
 services:
   courier:
-    image: courier:latest
+    image: mfloto/courier:latest
     volumes:
       - ./config.toml:/config.toml
