@@ -76,6 +76,15 @@ async fn main() {
     // Read config
     let config = Config::new();
 
+    // Validate config
+    match config.validate() {
+        Ok(_) => println!("Config validated successfully!"),
+        Err(e) => {
+            println!("Config validation failed: {}", e);
+            return;
+        }
+    }
+
     // Run courier on a loop
     loop {
         // TODO: logging
