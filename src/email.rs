@@ -1,7 +1,7 @@
+use html2text::from_read;
 use mail_parser::PartType::{Html, Text};
 use mail_parser::{Addr, Address, HeaderName, HeaderValue, MessageParser, MimeHeaders};
 use std::borrow::Cow;
-use html2text::from_read;
 
 /// Email struct that contains all information that will be sent
 #[derive(Debug)]
@@ -57,9 +57,7 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
                 println!("Found text body with ID {}:\n{}", i, message_body);
                 Some(message_body)
             }
-            Html(message_body) => {
-                Some(from_read(message_body.as_bytes(), 140).into())
-            }
+            Html(message_body) => Some(from_read(message_body.as_bytes(), 140).into()),
             _ => None,
         })
         .collect::<Vec<Cow<'_, str>>>()
@@ -114,7 +112,6 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
         .flatten()
         .collect();
 
-
     Ok(Email {
         to,
         from,
@@ -128,8 +125,7 @@ pub fn parse_message_to_email(message: Vec<u8>) -> Result<Email, &'static str> {
 
 /// Convert a list of addresses to a list of recipients
 fn addresses_to_recipients(list: &Vec<Addr>) -> Vec<Recipient> {
-    list
-        .iter()
+    list.iter()
         .map(|addr| {
             let name = addr
                 .name

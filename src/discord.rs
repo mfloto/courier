@@ -59,7 +59,9 @@ pub(crate) async fn send_message(
             }
 
             // Discord only allows a specific size of attachments per message. This size can be set in the config file
-            if total_attachment_size + attachment.contents.len() > discord_config.attachment_size_limit as usize * 1_000_000 {
+            if total_attachment_size + attachment.contents.len()
+                > discord_config.attachment_size_limit as usize * 1_000_000
+            {
                 // TODO: Add note to footer that not all attachments are included
                 break;
             }

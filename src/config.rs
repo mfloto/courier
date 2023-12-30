@@ -32,7 +32,6 @@ pub(crate) struct Config {
 }
 
 impl Config {
-
     /// Create a new config object from the config.toml file
     pub(crate) fn new() -> Self {
         let config_contents =

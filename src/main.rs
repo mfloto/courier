@@ -59,8 +59,7 @@ async fn courier(config: &Config) -> ImapResult<()> {
 
     // Send all emails to Discord
     for email in emails {
-        match discord::send_message(&email, &config.discord)
-            .await {
+        match discord::send_message(&email, &config.discord).await {
             Ok(_) => println!("Sent email to Discord!"),
             Err(e) => println!("Could not send email to Discord: {}", e),
         }
