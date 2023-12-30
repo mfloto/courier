@@ -78,9 +78,8 @@ pub(crate) async fn send_message(
         .post(discord_config.webhook_url.clone())
         .multipart(payload_form)
         .send()
-        .await
-        .unwrap();
+        .await?;
 
-    println!("Response: {:}", response.text().await.unwrap());
+    println!("Response: {:}", response.text().await?);
     Ok(())
 }

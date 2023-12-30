@@ -59,11 +59,12 @@ async fn courier(config: &Config) -> ImapResult<()> {
 
     // Send all emails to Discord
     for email in emails {
-        discord::send_message(&email, &config.discord)
-            .await
-            .expect("TODO: panic message");
+        match discord::send_message(&email, &config.discord)
+            .await {
+            Ok(_) => println!("Sent email to Discord!"),
+            Err(e) => println!("Could not send email to Discord: {}", e),
+        }
     }
-    // TODO: better error handling
 
     // Logout and disconnect
     imap_session.logout()?;
@@ -79,7 +80,10 @@ async fn main() {
     loop {
         // TODO: logging
         // TODO: notification on error
-        courier(&config).await.expect("An error occurred!");
+        match courier(&config).await {
+            Ok(_) => println!("Courier finished successfully!"),
+            Err(e) => println!("Courier finished with an error: {}", e),
+        }
         tokio::time::sleep(std::time::Duration::from_secs(config.imap.interval * 60)).await;
     }
 }

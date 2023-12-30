@@ -2,6 +2,7 @@ version: '3'
 
 services:
   courier:
+    restart: always
     image: mfloto/courier:latest
     volumes:
       - ./config.toml:/config.toml
