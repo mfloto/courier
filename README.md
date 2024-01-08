@@ -53,3 +53,4 @@ This project is meant to redirect emails together with their attachments into a 
 - [ ] Add logging
 - [ ] Add tests
 - [ ] Add optional notification about errors on different discord channel
+- [ ] Use env variables instead of config file (?)
