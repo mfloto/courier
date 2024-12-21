@@ -48,7 +48,7 @@ This project is meant to redirect emails together with their attachments into a 
 - [x] Add DOCKERFILE and docker-compose
 - [x] Adjust docker-compose to point to image on dockerhub
 - [ ] Use scratch image (Requires certificates to be copied to image. Maybe copy the ca-certificates.crt from the rust image?)
-- [ ] Configure CI
+- [x] Configure CI
 - [ ] Clean up code
 - [ ] Add logging
 - [ ] Add tests
